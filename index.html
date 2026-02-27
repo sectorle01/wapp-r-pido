@@ -3,85 +3,43 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Enviar WhatsApp sin guardar</title>
-  <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 20px; max-width: 640px; }
-    label { display:block; margin: 14px 0 6px; font-weight: 600; }
-    input, textarea, button { width: 100%; font-size: 16px; padding: 12px; box-sizing: border-box; }
-    textarea { min-height: 120px; resize: vertical; }
-    button { margin-top: 14px; font-weight: 700; cursor: pointer; }
-    button:disabled { opacity: 0.6; cursor: not-allowed; }
-    .hint { margin-top: 8px; font-size: 13px; opacity: .75; line-height: 1.35; }
-    .row { display: grid; grid-template-columns: 1fr; gap: 10px; }
-  </style>
+  <meta name="theme-color" content="#1f6feb" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>Wapp Rápido</title>
 </head>
+
 <body>
-  <h1>WhatsApp rápido</h1>
+  <header class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">⚡</div>
+      <div>
+        <div class="title">Wapp Rápido</div>
+        <div class="subtitle">Enviar WhatsApp sin guardar contacto</div>
+      </div>
+    </div>
+  </header>
 
-  <label for="phone">Teléfono (con prefijo o “+”, con o sin espacios)</label>
-  <input id="phone" inputmode="tel" placeholder="+34 600 111 222" autocomplete="off" />
+  <main class="card">
+    <label for="phone">Teléfono</label>
+    <input id="phone" inputmode="tel" placeholder="+34 600 111 222" autocomplete="off" />
 
-  <label for="msg">Mensaje (opcional)</label>
-  <textarea id="msg" placeholder="Escribe aquí... (Ctrl+Enter para enviar)"></textarea>
+    <label for="msg">Mensaje (opcional)</label>
+    <textarea id="msg" placeholder="Escribe aquí... (Ctrl+Enter para abrir)"></textarea>
 
-  <button id="send">Abrir WhatsApp</button>
+    <div class="row">
+      <button id="send">Abrir WhatsApp</button>
+      <button id="clear" class="secondary">Limpiar</button>
+    </div>
 
-  <div class="hint">
-    Se abrirá el chat aunque el número no esté guardado.  
-    Consejo: si pones un número español de 9 dígitos sin prefijo, se asume +34.
-  </div>
+    <p class="hint">
+      Consejo: si pones un número español de 9 dígitos, se asume +34.
+      Se abrirá el chat aunque no esté guardado.
+    </p>
 
-  <script>
-    const phoneEl = document.getElementById("phone");
-    const msgEl = document.getElementById("msg");
-    const sendBtn = document.getElementById("send");
+    <p id="status" class="status" aria-live="polite"></p>
+  </main>
 
-    function normalizaTelefono(raw) {
-      // Convierte "+34 600-111-222" -> "34600111222"
-      const digits = (raw || "").replace(/\D/g, "");
-      // Si meten 9 dígitos (España), asumimos prefijo 34
-      if (digits.length === 9) return "34" + digits;
-      return digits;
-    }
-
-    function abrirWhatsApp() {
-      const phone = normalizaTelefono(phoneEl.value);
-      const msg = msgEl.value.trim();
-
-      if (!phone || phone.length < 9) {
-        alert("Pon un teléfono válido (con prefijo o 9 dígitos si es España).");
-        phoneEl.focus();
-        return;
-      }
-
-      // Mensaje opcional: si está vacío, abre el chat sin texto
-      const base = `https://wa.me/${phone}`;
-      const url = msg ? `${base}?text=${encodeURIComponent(msg)}` : base;
-
-      sendBtn.disabled = true;
-      window.location.href = url;
-
-      // Por si el navegador no navega (bloqueos/atrás), re-habilita
-      setTimeout(() => { sendBtn.disabled = false; }, 1500);
-    }
-
-    sendBtn.addEventListener("click", abrirWhatsApp);
-
-    // Enter en el teléfono => enviar
-    phoneEl.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        abrirWhatsApp();
-      }
-    });
-
-    // Ctrl+Enter en el mensaje => enviar
-    msgEl.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
-        e.preventDefault();
-        abrirWhatsApp();
-      }
-    });
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>
