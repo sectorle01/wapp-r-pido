@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Enviar WhatsApp sin guardar</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 20px; }
+    label { display:block; margin: 14px 0 6px; font-weight: 600; }
+    input, textarea, button { width: 100%; font-size: 16px; padding: 12px; box-sizing: border-box; }
+    textarea { min-height: 120px; resize: vertical; }
+    button { margin-top: 14px; font-weight: 700; cursor: pointer; }
+    .hint { margin-top: 8px; font-size: 13px; opacity: .75; }
+  </style>
+</head>
+<body>
+  <h1>WhatsApp rápido</h1>
+
+  <label for="phone">Teléfono (con prefijo, sin +, sin espacios)</label>
+  <input id="phone" inputmode="tel" placeholder="34XXXXXXXXX" autocomplete="off" />
+
+  <label for="msg">Mensaje</label>
+  <textarea id="msg" placeholder="Escribe aquí..."></textarea>
+
+  <button id="send">Abrir WhatsApp</button>
+
+  <div class="hint">
+    Ejemplo: 34600111222. Se abrirá el chat aunque no esté guardado.
+  </div>
+
+  <script>
+    const phoneEl = document.getElementById("phone");
+    const msgEl = document.getElementById("msg");
+    const sendBtn = document.getElementById("send");
+
+    function normalizaTelefono(raw) {
+      // Quita todo excepto dígitos
+      return (raw || "").replace(/\D/g, "");
+    }
+
+    sendBtn.addEventListener("click", () => {
+      const phone = normalizaTelefono(phoneEl.value);
+      const msg = msgEl.value || "";
+
+      if (!phone) {
+        alert("Pon un teléfono válido (solo números, con prefijo).");
+        phoneEl.focus();
+        return;
+      }
+
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+      // Abre WhatsApp (o WhatsApp Web si procede)
+      window.location.href = url;
+    });
+  </script>
+</body>
+</html>
